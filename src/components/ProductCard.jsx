@@ -33,6 +33,7 @@ const ProductCard = ({ product, onAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
   const [magnifierActive, setMagnifierActive] = useState(false);
   const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
   const dropdownRef = useRef(null);
   const modalDropdownRef = useRef(null);
   const imageRef = useRef(null);
@@ -301,6 +302,13 @@ const ProductCard = ({ product, onAddToCart }) => {
                         onError={(e) => {
                           e.target.src = "https://via.placeholder.com/300x400?text=No+Image";
                         }}
+                        onLoad={(e) => {
+                          const img = e.target;
+                          setImageDimensions({
+                            width: img.naturalWidth,
+                            height: img.naturalHeight
+                          });
+                        }}
                         onMouseEnter={() => setMagnifierActive(true)}
                         onMouseLeave={() => setMagnifierActive(false)}
                         onMouseMove={(e) => {
@@ -314,17 +322,17 @@ const ProductCard = ({ product, onAddToCart }) => {
                       />
 
                       {/* Magnifier */}
-                      {magnifierActive && (
+                      {magnifierActive && imageDimensions.width > 0 && (
                         <div
                           className="position-absolute border border-2 border-white shadow-lg rounded-circle d-flex align-items-center justify-content-center"
                           style={{
                             width: '120px',
                             height: '120px',
-                            left: magnifierPosition.x,
-                            top: magnifierPosition.y,
+                            left: magnifierPosition.x - 60,
+                            top: magnifierPosition.y - 60,
                             backgroundImage: `url(${product.image})`,
-                            backgroundSize: '350px 500px',
-                            backgroundPosition: `-${magnifierPosition.x * 1.5}px -${magnifierPosition.y * 1.5}px`,
+                            backgroundSize: `${imageDimensions.width}px ${imageDimensions.height}px`,
+                            backgroundPosition: `-${magnifierPosition.x * 1.1}px -${magnifierPosition.y * 1.1}px`,
                             backgroundRepeat: 'no-repeat',
                             zIndex: 10,
                             pointerEvents: 'none'
